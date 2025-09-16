@@ -1,23 +1,32 @@
 import React, { createContext, useContext, useState } from 'react';
 
-// 1. Contextオブジェクトを作成
 const CardContext = createContext(null);
 
-// 2. Contextを提供するプロバイダーコンポーネント
 export const CardProvider = ({ children }) => {
-  // カードのリストを管理するstateをここに置く
+  // カードのリストを管理するstate。各カードオブジェクトにzoneプロパティを追加する
   const [cards, setCards] = useState([]);
 
-  // カードを追加する関数（例）
+  // カードを追加する関数。デフォルトで「自分の手札」に追加する
   const addCard = (newCard) => {
-    setCards(prevCards => [...prevCards, newCard]);
+    // 新しいカードオブジェクトにzoneプロパティを追加
+    const cardWithZone = { ...newCard, zone: 'myHand' }; // デフォルトゾーンをmyHandに設定
+    setCards(prevCards => [...prevCards, cardWithZone]);
+  };
+
+  // カードのゾーンを更新する関数（後でドラッグ＆ドロップで使う）
+  const moveCard = (cardId, newZone) => {
+    setCards(prevCards =>
+      prevCards.map(card =>
+        card.id === cardId ? { ...card, zone: newZone } : card
+      )
+    );
   };
 
   // Contextを通じて提供する値
   const contextValue = {
-    cards, // 現在のカードリスト
-    addCard, // カードを追加する関数
-    // 他にも、removeCard, moveCardなどの関数を追加していく
+    cards,
+    addCard,
+    moveCard, // moveCard関数も提供する
   };
 
   return (
@@ -27,7 +36,6 @@ export const CardProvider = ({ children }) => {
   );
 };
 
-// 3. Contextを利用するためのカスタムフック
 export const useCardContext = () => {
   const context = useContext(CardContext);
   if (!context) {

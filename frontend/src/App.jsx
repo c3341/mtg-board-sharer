@@ -19,6 +19,7 @@ function App() {
       const cardData = await response.json();
       console.log('取得したカードデータ:', cardData);
 
+      // addCardはCardContextでデフォルトゾーンを設定する
       addCard(cardData);
 
     } catch (error) {
@@ -27,17 +28,17 @@ function App() {
   };
 
   return (
-    <div className="app-container"> {/* 新しいクラス名を追加 */}
+    <div className="app-container">
       <h1>MTG Board Sharer</h1>
       <CardSearch onCardSelect={handleCardSelect} />
 
-      <div className="board-container"> {/* 新しいクラス名を追加 */}
+      <div className="board-container">
         {/* 相手の盤面 (上部) */}
         <div className="opponent-zone">
           <h2>相手の盤面</h2>
           <div className="zone-row">
-            <Hand /> {/* 相手の手札 */}
-            <Battlefield /> {/* 相手の戦場 */}
+            <Hand zoneType="opponentHand" /> {/* zoneType propを追加 */}
+            <Battlefield zoneType="opponentBattlefield" /> {/* zoneType propを追加 */}
           </div>
         </div>
 
@@ -45,8 +46,8 @@ function App() {
         <div className="player-zone">
           <h2>自分の盤面</h2>
           <div className="zone-row">
-            <Hand /> {/* 自分の手札 */}
-            <Battlefield /> {/* 自分の戦場 */}
+            <Hand zoneType="myHand" /> {/* zoneType propを追加 */}
+            <Battlefield zoneType="myBattlefield" /> {/* zoneType propを追加 */}
           </div>
         </div>
       </div>
