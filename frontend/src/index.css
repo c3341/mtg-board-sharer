@@ -1,0 +1,73 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 画面の高さいっぱいを使う */
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.board-container {
+  flex-grow: 1; /* 残りのスペースを埋める */
+  display: flex;
+  flex-direction: column; /* 縦方向に並べる */
+  justify-content: space-between; /* 上下端に配置 */
+}
+
+.player-zone, .opponent-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 中央揃え */
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin: 10px;
+  flex-grow: 1; /* ゾーンがスペースを埋めるように */
+}
+
+.zone-row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-wrap: wrap; /* カードがはみ出したら折り返す */
+}
+
+.zone-box {
+  border: 1px solid #eee;
+  padding: 10px;
+  margin: 5px;
+  min-width: 200px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* カードがない場合も中央に */
+}
+
+.card-item {
+  margin: 5px;
+  border: 1px solid lightgray;
+  padding: 5px;
+  text-align: center;
+}
+
+.card-item img {
+  width: 80px;
+  height: auto;
+}
