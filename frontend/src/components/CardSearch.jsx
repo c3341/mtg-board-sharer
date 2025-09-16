@@ -1,27 +1,60 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-// Appコンポーネントから渡された { cardNameList } をpropsとして受け取る
-function CardSearch({ cardNameList }) {
+// onCardSelectをpropsとして受け取る
+function CardSearch({ onCardSelect }) {
   const [searchText, setSearchText] = useState('');
-  // 検索結果の候補を保存するための新しいstate
   const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false); // APIリクエスト中かどうかの状態
+
+  // Scryfall Autocomplete APIのURL
+  const SCRYFALL_AUTOCOMPLETE_URL = 'https://api.scryfall.com/cards/autocomplete';
+
+  useEffect(() => {
+    if (searchText.trim() === '') {
+      setSuggestions([]);
+      return;
+    }
+
+    setLoading(true); // APIリクエスト開始
+
+    // 500ミリ秒後に実行されるタイマーを設定
+    const timer = setTimeout(async () => {
+      try {
+        // lang=jaを削除し、英語でのオートコンプリートを試す
+        const response = await fetch(`${SCRYFALL_AUTOCOMPLETE_URL}?q=${searchText}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        console.log('Scryfall APIからの生レスポンスデータ:', data);
+        console.log('suggestionsにセットされるデータ:', data.data);
+
+        setSuggestions(data.data || []); // 候補がなければ空配列
+      } catch (error) {
+        console.error('カード名のオートコンプリート中にエラーが発生しました:', error);
+        setSuggestions([]);
+      } finally {
+        setLoading(false); // APIリクエスト終了
+      }
+    }, 500); // 500ミリ秒のデバウンス
+
+    // クリーンアップ関数：前回のタイマーをクリアする
+    return () => {
+      clearTimeout(timer);
+    };
+
+  }, [searchText]); // searchTextが変更されるたびにこのeffectを実行
 
   const handleInputChange = (event) => {
-    const newSearchText = event.target.value;
-    setSearchText(newSearchText);
+    setSearchText(event.target.value);
+  };
 
-    // 入力された文字に基づいて、カード名のリストをフィルタリングする
-    if (newSearchText.length > 0) {
-      const filteredSuggestions = cardNameList.filter(name =>
-        // 大文字・小文字を区別せずに部分一致で検索
-        name.toLowerCase().includes(newSearchText.toLowerCase())
-      );
-      // パフォーマンスのため、候補は最大10件まで表示
-      setSuggestions(filteredSuggestions.slice(0, 10)); 
-    } else {
-      // 入力が空なら候補も空にする
-      setSuggestions([]); 
-    }
+  // 候補がクリックされた時のハンドラー
+  const handleSuggestionClick = (name) => {
+    setSearchText(name); // 検索ボックスに選択された名前を入れる
+    setSuggestions([]); // 候補リストをクリアする
+    onCardSelect(name); // 親コンポーネントに選択されたカード名を通知する
   };
 
   return (
@@ -32,10 +65,12 @@ function CardSearch({ cardNameList }) {
         value={searchText}
         onChange={handleInputChange}
       />
-      {/* 候補リストの表示 */}
+      {loading && <p>検索中...</p>} {/* ローディング表示 */}
       <ul>
         {suggestions.map(name => (
-          <li key={name}>{name}</li>
+          <li key={name} onClick={() => handleSuggestionClick(name)}> {/* クリック可能にする */}
+            {name}
+          </li>
         ))}
       </ul>
     </div>
