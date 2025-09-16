@@ -1,7 +1,7 @@
 import CardSearch from './components/CardSearch';
 import Battlefield from './components/Battlefield';
 import Hand from './components/Hand';
-import PlayerLifeDisplay from './components/PlayerLifeDisplay'; // PlayerLifeDisplayをインポート
+import PlayerLifeDisplay from './components/PlayerLifeDisplay';
 import { useCardContext } from './contexts/CardContext';
 
 function App() {
@@ -30,26 +30,44 @@ function App() {
   return (
     <div className="app-container">
       <h1>MTG Board Sharer</h1>
-      <CardSearch onCardSelect={handleCardSelect} />
+      <div className="search-container">
+        <CardSearch onCardSelect={handleCardSelect} />
+      </div>
 
       <div className="board-container">
         {/* 相手の盤面 (上部) */}
         <div className="opponent-zone">
-          <h2>相手の盤面</h2>
-          <PlayerLifeDisplay playerType="opponent" /> {/* 相手のライフ表示 */}
-          <div className="zone-row">
-            <Hand zoneType="opponentHand" />
-            <Battlefield zoneType="opponentBattlefield" />
+          {/* <h2>相手の盤面</h2> */}
+          <div className="zone-main-area">
+            {/* 相手の手札とライフカウンターの行 (上部) */}
+            <div className="hand-life-row">
+              <div className="hand-area">
+                <Hand zoneType="opponentHand" />
+              </div>
+              <PlayerLifeDisplay playerType="opponent" />
+            </div>
+            {/* 相手の戦場エリア (下部) */}
+            <div className="battlefield-area">
+              <Battlefield zoneType="opponentBattlefield" />
+            </div>
           </div>
         </div>
 
         {/* 自分の盤面 (下部) */}
         <div className="player-zone">
-          <h2>自分の盤面</h2>
-          <PlayerLifeDisplay playerType="my" /> {/* 自分のライフ表示 */}
-          <div className="zone-row">
-            <Hand zoneType="myHand" />
-            <Battlefield zoneType="myBattlefield" />
+          {/* <h2>自分の盤面</h2> */}
+          <div className="zone-main-area">
+            {/* 自分の戦場エリア (上部) */}
+            <div className="battlefield-area">
+              <Battlefield zoneType="myBattlefield" />
+            </div>
+            {/* 自分の手札とライフカウンターの行 (下部) */}
+            <div className="hand-life-row">
+              <div className="hand-area">
+                <Hand zoneType="myHand" />
+              </div>
+              <PlayerLifeDisplay playerType="my" />
+            </div>
           </div>
         </div>
       </div>

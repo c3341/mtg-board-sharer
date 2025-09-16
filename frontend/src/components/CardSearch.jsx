@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 
-// onCardSelectをpropsとして受け取る
 function CardSearch({ onCardSelect }) {
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -27,8 +26,10 @@ function CardSearch({ onCardSelect }) {
         }
         const data = await response.json();
         
+        // --- デバッグ用ログ ---
         console.log('Scryfall APIからの生レスポンスデータ:', data);
         console.log('suggestionsにセットされるデータ:', data.data);
+        // --- デバッグ用ログ ---
 
         setSuggestions(data.data || []); // 候補がなければ空配列
       } catch (error) {
@@ -58,17 +59,17 @@ function CardSearch({ onCardSelect }) {
   };
 
   return (
-    <div>
+    <div className="search-container">
       <input
         type="text"
         placeholder="カード名を入力..."
         value={searchText}
         onChange={handleInputChange}
       />
-      {loading && <p>検索中...</p>} {/* ローディング表示 */}
+      {loading && <p>検索中...</p>}
       <ul>
         {suggestions.map(name => (
-          <li key={name} onClick={() => handleSuggestionClick(name)}> {/* クリック可能にする */}
+          <li key={name} onClick={() => handleSuggestionClick(name)}>
             {name}
           </li>
         ))}
