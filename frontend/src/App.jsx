@@ -1,6 +1,7 @@
 import CardSearch from './components/CardSearch';
 import Battlefield from './components/Battlefield';
 import Hand from './components/Hand';
+import PlayerLifeDisplay from './components/PlayerLifeDisplay'; // PlayerLifeDisplayをインポート
 import { useCardContext } from './contexts/CardContext';
 
 function App() {
@@ -19,7 +20,6 @@ function App() {
       const cardData = await response.json();
       console.log('取得したカードデータ:', cardData);
 
-      // addCardはCardContextでデフォルトゾーンを設定する
       addCard(cardData);
 
     } catch (error) {
@@ -36,18 +36,20 @@ function App() {
         {/* 相手の盤面 (上部) */}
         <div className="opponent-zone">
           <h2>相手の盤面</h2>
+          <PlayerLifeDisplay playerType="opponent" /> {/* 相手のライフ表示 */}
           <div className="zone-row">
-            <Hand zoneType="opponentHand" /> {/* zoneType propを追加 */}
-            <Battlefield zoneType="opponentBattlefield" /> {/* zoneType propを追加 */}
+            <Hand zoneType="opponentHand" />
+            <Battlefield zoneType="opponentBattlefield" />
           </div>
         </div>
 
         {/* 自分の盤面 (下部) */}
         <div className="player-zone">
           <h2>自分の盤面</h2>
+          <PlayerLifeDisplay playerType="my" /> {/* 自分のライフ表示 */}
           <div className="zone-row">
-            <Hand zoneType="myHand" /> {/* zoneType propを追加 */}
-            <Battlefield zoneType="myBattlefield" /> {/* zoneType propを追加 */}
+            <Hand zoneType="myHand" />
+            <Battlefield zoneType="myBattlefield" />
           </div>
         </div>
       </div>
