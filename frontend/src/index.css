@@ -204,3 +204,27 @@ h1 {
   justify-content: center; /* Center cards in the row */
   width: 100%; /* Ensure it takes full width */
 }
+
+/* Styles for the new Battlefield structure */
+.battlefield-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  gap: 5px; /* Gap between land and non-land zones */
+}
+
+.sub-zone {
+  flex-grow: 1;
+  border: 1px dashed #555; /* Dashed border to indicate sub-zone */
+  border-radius: 4px;
+  min-height: 100px; /* Minimum height for visibility */
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-content: flex-start;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}

@@ -43,7 +43,7 @@ function App() {
           <PlayerLifeDisplay playerType="opponent" />
         </div>
         <div className="battlefield-area opponent-battlefield">
-          <Battlefield zoneType="opponentBattlefield" />
+          <Battlefield playerType="opponent" />
         </div>
         <div className="side-info opponent-side">
           {/* Future: Opponent's Graveyard/Library */}
@@ -53,7 +53,7 @@ function App() {
           <PlayerLifeDisplay playerType="my" />
         </div>
         <div className="battlefield-area my-battlefield">
-          <Battlefield zoneType="myBattlefield" />
+          <Battlefield playerType="my" />
         </div>
         <div className="side-info my-side">
           {/* Future: Player's Graveyard/Library */}
