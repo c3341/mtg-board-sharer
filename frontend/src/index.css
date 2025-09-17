@@ -1,3 +1,4 @@
+/* Reset and Base Styles */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,184 +6,201 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  background-color: #1a1a1a; /* Dark background */
+  color: #f0f0f0; /* Light text */
 }
 
 #root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* 画面の高さいっぱいを使う */
+  min-height: 100vh;
 }
 
+/* Main App Container */
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 h1 {
   text-align: center;
-  margin: 10px 0;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
 }
 
-/* 検索バーのスタイル */
+/* Search Container */
 .search-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+  position: relative; /* For suggestion list positioning */
+  margin: 0 auto 1rem auto;
+  width: 350px;
+  z-index: 100;
 }
 
 .search-container input {
-  padding: 8px;
-  font-size: 1em;
-  width: 300px;
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  background-color: #333;
+  color: #f0f0f0;
+  border: 1px solid #555;
+  border-radius: 4px;
 }
 
 .search-container ul {
   list-style: none;
   padding: 0;
-  margin: 5px 0;
-  border: 1px solid #ccc;
-  max-height: 200px;
-  overflow-y: auto;
-  background-color: white;
-  position: absolute; /* 検索ボックスの下に重ねて表示 */
-  width: 300px; /* 検索ボックスと同じ幅 */
-  z-index: 100; /* 他の要素の上に表示 */
+  margin: 0.25rem 0 0 0;
+  border: 1px solid #555;
+  background-color: #333;
+  position: absolute;
+  width: 100%;
+  border-radius: 4px;
 }
 
 .search-container li {
-  padding: 8px;
+  padding: 0.5rem;
   cursor: pointer;
 }
 
 .search-container li:hover {
-  background-color: #f0f0f0;
+  background-color: #4a4a4a;
 }
 
+/* Game Board Layout */
+.game-board {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: 150px 1fr 150px; /* PlayerInfo | Battlefield | SideInfo */
+  grid-template-rows: 1fr 1fr; /* Opponent | Player */
+  gap: 1rem;
+  /* Use a calculated height to avoid overflow */
+  height: calc(100% - 180px); /* Adjust 180px based on hand area height etc. */
+}
 
-/* --- 盤面レイアウト --- */
-.board-container {
-  flex-grow: 1; /* 残りのスペースを埋める */
+.player-info {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* 上下端に配置 */
-  padding: 10px;
-}
-
-.player-zone, .opponent-zone {
-  display: flex;
-  flex-direction: column; /* 縦方向に要素を並べる */
-  align-items: center; /* 中央揃え */
-  padding: 10px;
-  border: 1px solid #ccc;
-  margin: 5px;
-  flex-grow: 1; /* スペースを埋める */
-}
-
-/* 相手のゾーンは上部に */
-.opponent-zone {
-  justify-content: flex-start;
-}
-
-/* 自分のゾーンは下部に */
-.player-zone {
-  justify-content: flex-end;
-}
-
-/* 戦場と手札/ライフカウンターの行 */
-.zone-main-area {
-  display: flex;
-  flex-direction: column; /* 戦場と手札/ライフを縦に並べる */
-  width: 100%;
   align-items: center;
+  padding: 1rem;
+  background-color: #242424;
+  border-radius: 8px;
 }
 
-/* zone-boxのスタイルをbattlefield-areaとhand-areaに統合 */
+.opponent-info { grid-area: 1 / 1 / 2 / 2; }
+.my-info { grid-area: 2 / 1 / 3 / 2; }
+
 .battlefield-area {
-  border: 2px dashed green;
-  width: 90%; /* 親の幅の90% */
-  min-height: 300px; /* 戦場の高さ */
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 10px;
-  margin-bottom: 10px;
-  /* zone-boxから移動したスタイル */
-  border: 1px solid #eee; /* ゾーンの枠 */
-  margin: 5px; /* ゾーン間の余白 */
-  flex-direction: column; /* ゾーン内の要素を縦に並べる */
-  align-items: center; /* ゾーン内の要素を中央揃え */
-  justify-content: center; /* ゾーン内の要素を中央に */
+  gap: 10px;
+  align-content: flex-start;
+  overflow-y: auto; /* Allow scrolling within battlefield */
 }
 
-.hand-life-row {
-  display: flex;
-  justify-content: center; /* 手札とライフを中央に */
-  align-items: flex-end; /* ライフカウンターを下揃えに */
-  width: 90%;
+.opponent-battlefield { grid-area: 1 / 2 / 2 / 3; }
+.my-battlefield { grid-area: 2 / 2 / 3 / 3; }
+
+/* Side info areas (for graveyard, library etc. in the future) */
+.side-info {
+  background-color: #242424;
+  border-radius: 8px;
 }
+.opponent-side { grid-area: 1 / 3 / 2 / 4; }
+.my-side { grid-area: 2 / 3 / 3 / 4; }
+
 
 .hand-area {
-  border: 2px dashed blue;
-  min-height: 120px; /* 手札の高さ */
-  width: 70%; /* 手札の幅 */
+  background-color: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid #444;
+  padding: 0.5rem;
+  box-sizing: border-box;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 5px;
-  margin-right: 10px; /* ライフカウンターとの間隔 */
-  /* zone-boxから移動したスタイル */
-  border: 1px solid #eee; /* ゾーンの枠 */
-  margin: 5px; /* ゾーン間の余白 */
-  flex-direction: column; /* ゾーン内の要素を縦に並べる */
-  align-items: center; /* ゾーン内の要素を中央揃え */
-  justify-content: center; /* ゾーン内の要素を中央に */
-}
-
-.life-counter-box {
-  border: 1px solid gray;
-  padding: 10px;
-  margin: 5px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 10px;
+  overflow-x: auto;
 }
 
-.life-counter-box h4 {
-  margin: 0 0 5px 0;
+.player-hand-area {
+  height: 140px; /* Fixed height for the hand area */
 }
 
-.life-counter-box input {
-  font-size: 2em;
-  font-weight: bold;
-  width: 80px;
-  text-align: center;
-  border: none;
-  background: transparent;
+/* Opponent's hand is just a placeholder bar at the top */
+.opponent-hand-area {
+  height: 40px;
+  background-color: #242424;
+  border-radius: 8px;
 }
 
 
-/* カードアイテムの基本スタイル */
+/* Card Item Style */
 .card-item {
-  margin: 5px;
-  border: 1px solid lightgray;
-  padding: 5px;
-  text-align: center;
-  background-color: white;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-  cursor: grab; /* ドラッグ可能であることを示すカーソル */
+  width: 90px; /* Smaller card width */
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: black;
+  cursor: grab;
+  position: relative; /* For potential overlays */
+  transition: transform 0.1s ease-in-out;
+}
+.card-item:hover {
+  transform: scale(1.05);
+  z-index: 10;
 }
 
 .card-item img {
-  width: 80px;
+  width: 100%;
   height: auto;
+  display: block;
+}
+
+.card-item p {
+  display: none; /* Hide name by default */
+}
+
+/* Life Counter */
+.life-counter-box {
+  text-align: center;
+}
+
+.life-counter-box h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.life-counter-box input {
+  font-size: 2.5rem;
+  font-weight: bold;
+  width: 100px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  color: #f0f0f0;
+}
+
+/* Style for the droppable area inside zones */
+.zone-droppable-area {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-content: flex-start;
+  /* padding: 1rem; */ /* 親要素のpaddingと重複するためコメントアウト */
+  box-sizing: border-box;
+  border-radius: 8px; /* Match parent container */
+  overflow-y: auto;
+}
+
+/* Container for cards within a zone */
+.zone-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center; /* Center cards in the row */
+  width: 100%; /* Ensure it takes full width */
 }

@@ -34,42 +34,34 @@ function App() {
         <CardSearch onCardSelect={handleCardSelect} />
       </div>
 
-      <div className="board-container">
-        {/* 相手の盤面 (上部) */}
-        <div className="opponent-zone">
-          {/* <h2>相手の盤面</h2> */}
-          <div className="zone-main-area">
-            {/* 相手の手札とライフカウンターの行 (上部) */}
-            <div className="hand-life-row">
-              <div className="hand-area">
-                <Hand zoneType="opponentHand" />
-              </div>
-              <PlayerLifeDisplay playerType="opponent" />
-            </div>
-            {/* 相手の戦場エリア (下部) */}
-            <div className="battlefield-area">
-              <Battlefield zoneType="opponentBattlefield" />
-            </div>
-          </div>
+      <div className="opponent-hand-area">
+        <Hand zoneType="opponentHand" />
+      </div>
+
+      <main className="game-board">
+        <div className="player-info opponent-info">
+          <PlayerLifeDisplay playerType="opponent" />
+        </div>
+        <div className="battlefield-area opponent-battlefield">
+          <Battlefield zoneType="opponentBattlefield" />
+        </div>
+        <div className="side-info opponent-side">
+          {/* Future: Opponent's Graveyard/Library */}
         </div>
 
-        {/* 自分の盤面 (下部) */}
-        <div className="player-zone">
-          {/* <h2>自分の盤面</h2> */}
-          <div className="zone-main-area">
-            {/* 自分の戦場エリア (上部) */}
-            <div className="battlefield-area">
-              <Battlefield zoneType="myBattlefield" />
-            </div>
-            {/* 自分の手札とライフカウンターの行 (下部) */}
-            <div className="hand-life-row">
-              <div className="hand-area">
-                <Hand zoneType="myHand" />
-              </div>
-              <PlayerLifeDisplay playerType="my" />
-            </div>
-          </div>
+        <div className="player-info my-info">
+          <PlayerLifeDisplay playerType="my" />
         </div>
+        <div className="battlefield-area my-battlefield">
+          <Battlefield zoneType="myBattlefield" />
+        </div>
+        <div className="side-info my-side">
+          {/* Future: Player's Graveyard/Library */}
+        </div>
+      </main>
+
+      <div className="hand-area player-hand-area">
+        <Hand zoneType="myHand" />
       </div>
     </div>
   )

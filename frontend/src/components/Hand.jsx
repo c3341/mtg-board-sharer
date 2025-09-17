@@ -16,7 +16,7 @@ function Hand({ zoneType }) {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'card',
     drop: (item, monitor) => {
-      moveCard(item.id, zoneType);
+      moveCard(item.instanceId, zoneType);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -27,16 +27,13 @@ function Hand({ zoneType }) {
     // ルートのdivに直接drop refとスタイルを適用
     <div
       ref={drop}
-      className="hand-area" // index.cssで定義されたクラス
-      style={{ backgroundColor: isOver ? 'lightblue' : 'transparent' }} // ホバー時に色を変える
+      className="zone-droppable-area" // 新しい、より汎用的なクラス名
+      style={{ backgroundColor: isOver ? 'rgba(0, 150, 255, 0.1)' : 'transparent', height: '100%' }} // ホバー色をテーマに合わせ、高さを100%に
     >
-      <h3>{zoneDisplayName}</h3>
-      {filteredCards.length === 0 ? (
-        <p>{zoneDisplayName}にカードはありません。</p>
-      ) : (
+      {filteredCards.length > 0 && (
         <div className="zone-row"> {/* カード表示用のコンテナ */}
           {filteredCards.map(card => (
-            <DraggableCard key={card.id} card={card} />
+            <DraggableCard key={card.instanceId} card={card} />
           ))}
         </div>
       )}

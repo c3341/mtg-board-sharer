@@ -7,7 +7,7 @@ function PlayerLifeDisplay({ playerType }) {
   const currentLifeValue = (playerType === 'my' ? myLife : opponentLife);
   const displayValue = currentLifeValue === '' ? '' : currentLifeValue; // 0の場合は空文字列を表示
 
-  const displayName = playerType === 'my' ? '自分のライフ' : '相手のライフ';
+  const displayName = playerType === 'my' ? 'Player' : 'Opponent';
 
   const handleLifeChange = (event) => {
     const inputValue = event.target.value;

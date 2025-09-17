@@ -5,7 +5,7 @@ function DraggableCard({ card }) {
   // useDragフックを使って、このコンポーネントをドラッグ可能にする
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'card', // ドラッグするアイテムのタイプを定義
-    item: { id: card.id, zone: card.zone }, // ドラッグ中に渡すデータ
+    item: { instanceId: card.instanceId, zone: card.zone }, // ドラッグ中に渡すデータ
     collect: (monitor) => ({
       isDragging: monitor.isDragging(), // ドラッグ中かどうかを監視
     }),

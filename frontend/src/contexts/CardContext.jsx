@@ -8,16 +8,20 @@ export const CardProvider = ({ children }) => {
 
   // カードを追加する関数。デフォルトで「自分の手札」に追加する
   const addCard = (newCard) => {
-    // 新しいカードオブジェクトにzoneプロパティを追加
-    const cardWithZone = { ...newCard, zone: 'myHand' }; // デフォルトゾーンをmyHandに設定
-    setCards(prevCards => [...prevCards, cardWithZone]);
+    // 新しいカードオブジェクトにユニークなinstanceIdとzoneプロパティを追加
+    const cardWithInstanceId = { 
+      ...newCard, 
+      instanceId: crypto.randomUUID(), // ユニークIDを付与
+      zone: 'myHand' 
+    };
+    setCards(prevCards => [...prevCards, cardWithInstanceId]);
   };
 
-  // カードのゾーンを更新する関数（後でドラッグ＆ドロップで使う）
-  const moveCard = (cardId, newZone) => {
+  // カードのゾーンを更新する関数
+  const moveCard = (cardInstanceId, newZone) => {
     setCards(prevCards =>
       prevCards.map(card =>
-        card.id === cardId ? { ...card, zone: newZone } : card
+        card.instanceId === cardInstanceId ? { ...card, zone: newZone } : card
       )
     );
   };
