@@ -2,8 +2,11 @@ import React from 'react';
 import { useDrag } from 'react-dnd';
 import { useCardContext } from '../contexts/CardContext';
 
+// カードバック画像のパス
+const CARD_BACK_IMAGE = '/card_back.jpg'; // publicフォルダ直下
+
 function DraggableCard({ card }) {
-  const { toggleTap } = useCardContext();
+  const { toggleTap, toggleFaceDown } = useCardContext(); // toggleFaceDownを取得
 
   // useDragフックを使って、このコンポーネントをドラッグ可能にする
   const [{ isDragging }, drag] = useDrag(() => ({
@@ -18,13 +21,13 @@ function DraggableCard({ card }) {
     toggleTap(card.instanceId);
   };
 
-  // カウンター機能は今回は実装しないので、onContextMenuは不要
-  // const handleContextMenu = (e) => {
-  //   e.preventDefault();
-  //   if (onContextMenu) {
-  //     onContextMenu(card.instanceId, e);
-  //   }
-  // };
+  const handleDoubleClick = (e) => {
+    e.stopPropagation(); // クリックイベントの伝播を停止
+    toggleFaceDown(card.instanceId);
+  };
+
+  // 表示する画像のURLを決定
+  const imageUrl = card.isFaceDown ? CARD_BACK_IMAGE : (card.image_uris && card.image_uris.small);
 
   return (
     // drag refをDOM要素にアタッチすることで、その要素がドラッグ可能になる
@@ -33,16 +36,13 @@ function DraggableCard({ card }) {
       className={`card-item ${card.isTapped ? 'tapped' : ''}`} // タップ状態に応じてクラスを追加
       style={{ opacity: isDragging ? 0.5 : 1 }} // ドラッグ中は半透明にする
       onClick={handleClick} // クリックイベントを追加
-      // onContextMenu={handleContextMenu} // 右クリックイベントは今回は追加しない
+      onDoubleClick={handleDoubleClick} // ダブルクリックイベントを追加
     >
-      <p>{card.printed_name || card.name}</p>
-      {card.image_uris && card.image_uris.small && (
-        <img src={card.image_uris.small} alt={card.name} />
+      {/* 裏向きの場合は名前を表示しない */}
+      {!card.isFaceDown && <p>{card.printed_name || card.name}</p>}
+      {imageUrl && (
+        <img src={imageUrl} alt={card.isFaceDown ? 'Card Back' : card.name} />
       )}
-      {/* カウンター表示は今回は追加しない */}
-      {/* {card.counters > 0 && (
-        <div className="card-counters">{card.counters}</div>
-      )} */}
     </div>
   );
 }

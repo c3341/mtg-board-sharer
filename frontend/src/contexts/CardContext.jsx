@@ -13,7 +13,8 @@ export const CardProvider = ({ children }) => {
       ...newCard, 
       instanceId: crypto.randomUUID(), // ユニークIDを付与
       zone: 'myHand',
-      isTapped: false, // isTappedプロパティを追加
+      isTapped: false,
+      isFaceDown: false, // isFaceDownプロパティを追加
     };
     setCards(prevCards => [...prevCards, cardWithInstanceId]);
   };
@@ -36,12 +37,22 @@ export const CardProvider = ({ children }) => {
     );
   };
 
+  // カードの裏向き状態を切り替える関数
+  const toggleFaceDown = (cardInstanceId) => {
+    setCards(prevCards =>
+      prevCards.map(card =>
+        card.instanceId === cardInstanceId ? { ...card, isFaceDown: !card.isFaceDown } : card
+      )
+    );
+  };
+
   // Contextを通じて提供する値
   const contextValue = {
     cards,
     addCard,
     moveCard,
-    toggleTap, // toggleTap関数も提供する
+    toggleTap,
+    toggleFaceDown, // toggleFaceDown関数も提供する
   };
 
   return (
