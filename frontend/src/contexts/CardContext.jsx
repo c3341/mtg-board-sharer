@@ -12,7 +12,8 @@ export const CardProvider = ({ children }) => {
     const cardWithInstanceId = { 
       ...newCard, 
       instanceId: crypto.randomUUID(), // ユニークIDを付与
-      zone: 'myHand' 
+      zone: 'myHand',
+      isTapped: false, // isTappedプロパティを追加
     };
     setCards(prevCards => [...prevCards, cardWithInstanceId]);
   };
@@ -26,11 +27,21 @@ export const CardProvider = ({ children }) => {
     );
   };
 
+  // カードのタップ状態を切り替える関数
+  const toggleTap = (cardInstanceId) => {
+    setCards(prevCards =>
+      prevCards.map(card =>
+        card.instanceId === cardInstanceId ? { ...card, isTapped: !card.isTapped } : card
+      )
+    );
+  };
+
   // Contextを通じて提供する値
   const contextValue = {
     cards,
     addCard,
-    moveCard, // moveCard関数も提供する
+    moveCard,
+    toggleTap, // toggleTap関数も提供する
   };
 
   return (
