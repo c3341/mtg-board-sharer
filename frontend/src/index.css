@@ -267,18 +267,20 @@ h1 {
 /* Counter Badge Style */
 .counter-badge {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  background-color: #d9534f; /* 赤系の背景 */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(217, 83, 79, 0.85); /* 少し透明度を持たせる */
   color: white;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 24px; /* 少し大きく */
+  height: 24px; /* 少し大きく */
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 12px;
+  font-size: 14px; /* 少し大きく */
   font-weight: bold;
   z-index: 2; /* カード画像の上に表示 */
   border: 1px solid white;
+  pointer-events: none; /* カウンターがクリックイベントを奪わないように */
 }

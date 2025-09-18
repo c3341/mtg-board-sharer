@@ -11,7 +11,7 @@ function DraggableCard({ card }) {
     toggleFaceDown, 
     deleteCard, 
     duplicateCard, 
-    addCounter 
+    addCounters
   } = useCardContext();
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
 
@@ -102,9 +102,16 @@ function DraggableCard({ card }) {
           style={{ top: contextMenu.y, left: contextMenu.x }}
         >
           <ul>
-            <li onClick={() => { toggleTap(card.instanceId); closeContextMenu(); }}>タップ / アンタップ</li>
-            <li onClick={() => { toggleFaceDown(card.instanceId); closeContextMenu(); }}>表向き / 裏向き</li>
-            <li onClick={() => { addCounter(card.instanceId); closeContextMenu(); }}>カウンターを置く</li>
+            <li onClick={() => {
+              const amountStr = prompt('置くカウンターの数を入力してください:', '1');
+              if (amountStr) { // キャンセルでなければ
+                const amount = parseInt(amountStr, 10);
+                if (!isNaN(amount) && amount > 0) {
+                  addCounters(card.instanceId, amount);
+                }
+              }
+              closeContextMenu();
+            }}>カウンターを置く...</li>
             <li onClick={() => { duplicateCard(card.instanceId); closeContextMenu(); }}>複製する</li>
             <li onClick={() => { deleteCard(card.instanceId); closeContextMenu(); }}>消去する</li>
           </ul>

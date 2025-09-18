@@ -70,14 +70,17 @@ export const CardProvider = ({ children }) => {
     }
   };
 
-  // カードにカウンターを置く関数（一旦、種類は+1/+1で固定）
-  const addCounter = (cardInstanceId) => {
+  // カードに指定した数のカウンターを置く関数
+  const addCounters = (cardInstanceId, amount) => {
+    if (amount <= 0) return; // 0以下の場合は何もしない
+
     setCards(prevCards =>
       prevCards.map(card => {
         if (card.instanceId === cardInstanceId) {
-          // countersプロパティがなければ初期化
           const newCounters = card.counters ? [...card.counters] : [];
-          newCounters.push({ id: crypto.randomUUID(), type: '+1/+1' });
+          for (let i = 0; i < amount; i++) {
+            newCounters.push({ id: crypto.randomUUID(), type: '+1/+1' });
+          }
           return { ...card, counters: newCounters };
         }
         return card;
@@ -94,7 +97,7 @@ export const CardProvider = ({ children }) => {
     toggleFaceDown,
     deleteCard,
     duplicateCard,
-    addCounter,
+    addCounters, // addCounterからaddCountersに変更
   };
 
   return (
