@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import { useCardContext } from '../contexts/CardContext';
 
@@ -6,7 +6,13 @@ import { useCardContext } from '../contexts/CardContext';
 const CARD_BACK_IMAGE = '/card_back.jpg'; // publicフォルダ直下
 
 function DraggableCard({ card }) {
-  const { toggleTap, toggleFaceDown } = useCardContext();
+  const { 
+    toggleTap, 
+    toggleFaceDown, 
+    deleteCard, 
+    duplicateCard, 
+    addCounter 
+  } = useCardContext();
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
 
   const [{ isDragging }, drag] = useDrag(() => ({
@@ -18,10 +24,10 @@ function DraggableCard({ card }) {
   }));
 
   const handleClick = (e) => {
-    // コンテキストメニュー表示中は、通常のクリックを無効化
+    // 左クリックでメニューが表示されていれば閉じる
     if (contextMenu.visible) {
       e.preventDefault();
-      setContextMenu({ visible: false, x: 0, y: 0 });
+      closeContextMenu();
       return;
     }
     toggleTap(card.instanceId);
@@ -34,7 +40,7 @@ function DraggableCard({ card }) {
 
   const handleContextMenu = (e) => {
     e.preventDefault();
-    e.stopPropagation(); // 他のクリックイベントへの伝播を停止
+    e.stopPropagation();
     setContextMenu({
       visible: true,
       x: e.clientX,
@@ -42,16 +48,33 @@ function DraggableCard({ card }) {
     });
   };
 
-  const closeContextMenu = () => {
+  const closeContextMenu = useCallback(() => {
     setContextMenu({ visible: false, x: 0, y: 0 });
-  };
+  }, []);
+
+  // メニューの外側をクリックしたときに閉じるためのエフェクト
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (contextMenu.visible) {
+        closeContextMenu();
+      }
+    };
+    // メニュー表示時にのみイベントリスナーを追加
+    if (contextMenu.visible) {
+      document.addEventListener('click', handleClickOutside);
+    }
+    // クリーンアップ関数
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [contextMenu.visible, closeContextMenu]);
+
 
   // 表示する画像のURLを決定
   const imageUrl = card.isFaceDown ? CARD_BACK_IMAGE : (card.image_uris && card.image_uris.small);
 
   return (
     <>
-      {/* drag refをDOM要素にアタッチすることで、その要素がドラッグ可能になる */}
       <div
         ref={drag}
         className={`card-item ${card.isTapped ? 'tapped' : ''}`}
@@ -60,6 +83,13 @@ function DraggableCard({ card }) {
         onDoubleClick={handleDoubleClick}
         onContextMenu={handleContextMenu}
       >
+        {/* カウンター表示 */}
+        {card.counters && card.counters.length > 0 && (
+          <div className="counter-badge">
+            {card.counters.length}
+          </div>
+        )}
+
         {!card.isFaceDown && <p>{card.printed_name || card.name}</p>}
         {imageUrl && (
           <img src={imageUrl} alt={card.isFaceDown ? 'Card Back' : card.name} />
@@ -70,12 +100,13 @@ function DraggableCard({ card }) {
         <div
           className="context-menu"
           style={{ top: contextMenu.y, left: contextMenu.x }}
-          onClick={closeContextMenu} // メニュー自体をクリックしても閉じる
         >
           <ul>
-            <li>タップ / アンタップ</li>
-            <li>表向き / 裏向き</li>
-            <li>カウンターを置く</li>
+            <li onClick={() => { toggleTap(card.instanceId); closeContextMenu(); }}>タップ / アンタップ</li>
+            <li onClick={() => { toggleFaceDown(card.instanceId); closeContextMenu(); }}>表向き / 裏向き</li>
+            <li onClick={() => { addCounter(card.instanceId); closeContextMenu(); }}>カウンターを置く</li>
+            <li onClick={() => { duplicateCard(card.instanceId); closeContextMenu(); }}>複製する</li>
+            <li onClick={() => { deleteCard(card.instanceId); closeContextMenu(); }}>消去する</li>
           </ul>
         </div>
       )}

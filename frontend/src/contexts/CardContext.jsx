@@ -14,7 +14,8 @@ export const CardProvider = ({ children }) => {
       instanceId: crypto.randomUUID(), // ユニークIDを付与
       zone: 'myHand',
       isTapped: false,
-      isFaceDown: false, // isFaceDownプロパティを追加
+      isFaceDown: false,
+      counters: [], // カウンタープロパティを初期化
     };
     setCards(prevCards => [...prevCards, cardWithInstanceId]);
   };
@@ -46,13 +47,54 @@ export const CardProvider = ({ children }) => {
     );
   };
 
+  // カードを削除する関数
+  const deleteCard = (cardInstanceId) => {
+    setCards(prevCards => prevCards.filter(card => card.instanceId !== cardInstanceId));
+  };
+
+  // カードを複製する関数
+  const duplicateCard = (cardInstanceId) => {
+    const cardToDuplicate = cards.find(card => card.instanceId === cardInstanceId);
+    if (cardToDuplicate) {
+      const newCard = {
+        ...cardToDuplicate,
+        instanceId: crypto.randomUUID(),
+        // 複製されたカードはタップやカウンターの状態を引き継がない方が自然な場合もあるが、一旦すべて引き継ぐ
+      };
+      
+      // 元のカードのインデックスを見つけて、その隣に複製を追加する
+      const originalIndex = cards.findIndex(card => card.instanceId === cardInstanceId);
+      const newCards = [...cards];
+      newCards.splice(originalIndex + 1, 0, newCard);
+      setCards(newCards);
+    }
+  };
+
+  // カードにカウンターを置く関数（一旦、種類は+1/+1で固定）
+  const addCounter = (cardInstanceId) => {
+    setCards(prevCards =>
+      prevCards.map(card => {
+        if (card.instanceId === cardInstanceId) {
+          // countersプロパティがなければ初期化
+          const newCounters = card.counters ? [...card.counters] : [];
+          newCounters.push({ id: crypto.randomUUID(), type: '+1/+1' });
+          return { ...card, counters: newCounters };
+        }
+        return card;
+      })
+    );
+  };
+
   // Contextを通じて提供する値
   const contextValue = {
     cards,
     addCard,
     moveCard,
     toggleTap,
-    toggleFaceDown, // toggleFaceDown関数も提供する
+    toggleFaceDown,
+    deleteCard,
+    duplicateCard,
+    addCounter,
   };
 
   return (
