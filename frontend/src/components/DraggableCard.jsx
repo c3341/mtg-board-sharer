@@ -37,6 +37,11 @@ function DraggableCard({ card }) {
       style={{ opacity: isDragging ? 0.5 : 1 }} // ドラッグ中は半透明にする
       onClick={handleClick} // クリックイベントを追加
       onDoubleClick={handleDoubleClick} // ダブルクリックイベントを追加
+      onContextMenu={(e) => {
+        e.preventDefault();
+        console.log('Right-clicked!', card.instanceId);
+        // ここにコンテキストメニュー表示のロジックを追加していく
+      }}
     >
       {/* 裏向きの場合は名前を表示しない */}
       {!card.isFaceDown && <p>{card.printed_name || card.name}</p>}
