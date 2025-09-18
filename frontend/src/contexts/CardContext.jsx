@@ -88,6 +88,11 @@ export const CardProvider = ({ children }) => {
     );
   };
 
+  // 盤面全体を新しいカード配列で上書きする関数
+  const overwriteCards = (newCards) => {
+    setCards(newCards);
+  };
+
   // Contextを通じて提供する値
   const contextValue = {
     cards,
@@ -98,6 +103,7 @@ export const CardProvider = ({ children }) => {
     deleteCard,
     duplicateCard,
     addCounters, // addCounterからaddCountersに変更
+    overwriteCards,
   };
 
   return (

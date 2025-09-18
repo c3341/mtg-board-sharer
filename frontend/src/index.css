@@ -300,6 +300,49 @@ h1 {
   pointer-events: none; /* カウンターがクリックイベントを奪わないように */
 }
 
+/* === Loading Overlay === */
+.loading-fullscreen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.loading-spinner-large {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #555;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1.5s linear infinite;
+}
+
+/* === Controls (Search & Share) === */
+.controls-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.share-button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap; /* ボタンテキストが改行しないように */
+}
+
+.share-button:hover {
+  background-color: #0056b3;
+}
+
 /* === Search Component Styles === */
 
 /* クリアボタンのスタイル */
