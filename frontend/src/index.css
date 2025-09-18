@@ -46,6 +46,8 @@ h1 {
   color: #f0f0f0;
   border: 1px solid #555;
   border-radius: 4px;
+  padding-right: 30px; /* クリアボタンのスペースを確保 */
+  ime-mode: disabled; /* IMEを無効化 */
 }
 
 .search-container ul {
@@ -283,4 +285,45 @@ h1 {
   z-index: 2; /* カード画像の上に表示 */
   border: 1px solid white;
   pointer-events: none; /* カウンターがクリックイベントを奪わないように */
+}
+
+/* === Search Component Styles === */
+
+/* クリアボタンのスタイル */
+.clear-button {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 20px;
+  line-height: 1;
+  padding: 0;
+}
+.clear-button:hover {
+  color: #fff;
+}
+
+/* ローディングスピナーのスタイル */
+.loading-spinner {
+  position: absolute;
+  right: 8px; /* クリアボタンと同じ位置 */
+  top: 50%;
+  /* Y軸方向の中央揃えと回転を同時に行う */
+  transform: translateY(-50%) rotate(0deg);
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #555;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* スピナーの回転アニメーション */
+@keyframes spin {
+  0% { transform: translateY(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) rotate(360deg); }
 }
