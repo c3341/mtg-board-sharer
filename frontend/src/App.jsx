@@ -1,11 +1,43 @@
+import React from 'react';
 import CardSearch from './components/CardSearch';
 import Battlefield from './components/Battlefield';
 import Hand from './components/Hand';
 import PlayerLifeDisplay from './components/PlayerLifeDisplay';
 import { useCardContext } from './contexts/CardContext';
+import { useDrop } from 'react-dnd';
+import DraggableCard from './components/DraggableCard';
+
+// Battlefield.jsxからコピーしてきた、動作実績のあるコンポーネント
+const DroppableSubZone = ({ zoneId, cards, moveCard }) => {
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: 'card',
+    drop: (item) => moveCard(item.instanceId, zoneId),
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  }));
+
+  const filteredCards = cards.filter(card => card.zone === zoneId);
+
+  return (
+    <div 
+      ref={drop} 
+      className="sub-zone" // 意図的に.sub-zoneクラスを使用
+      style={{ backgroundColor: isOver ? 'rgba(0, 255, 0, 0.1)' : 'transparent', height: '100%' }}
+    >
+      {filteredCards.length > 0 && (
+        <div className="zone-row">
+          {filteredCards.map(card => (
+            <DraggableCard key={card.instanceId} card={card} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 function App() {
-  const { addCard } = useCardContext();
+  const { addCard, cards, moveCard } = useCardContext();
 
   const handleCardSelect = async (cardName) => {
     console.log('Appコンポーネントでカードが選択されました:', cardName);
@@ -56,7 +88,8 @@ function App() {
           <Battlefield playerType="my" />
         </div>
         <div className="side-info my-side">
-          {/* Future: Player's Graveyard/Library */}
+          {/* <SideZone zoneId="mySide" /> */}
+          <DroppableSubZone zoneId="mySide" cards={cards} moveCard={moveCard} />
         </div>
       </main>
 
@@ -67,4 +100,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
