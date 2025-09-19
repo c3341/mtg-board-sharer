@@ -102,7 +102,7 @@ h1 {
   padding: 1rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 25px;
   align-content: flex-start;
   overflow-y: auto; /* Allow scrolling within battlefield */
 }
@@ -120,7 +120,7 @@ h1 {
 .side-zone-droppable {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 25px;
   padding: 1rem;
   height: 100%;
   min-height: 150px; /* 最低限の高さを確保してドロップイベントを受け付ける */
@@ -140,7 +140,7 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 25px;
   overflow-x: auto;
 }
 
@@ -214,7 +214,7 @@ h1 {
   height: 100%;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 25px;
   align-content: flex-start;
   /* padding: 1rem; */ /* 親要素のpaddingと重複するためコメントアウト */
   box-sizing: border-box;
@@ -226,7 +226,7 @@ h1 {
 .zone-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 25px;
   justify-content: center; /* Center cards in the row */
   width: 100%; /* Ensure it takes full width */
 }
@@ -248,7 +248,7 @@ h1 {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 25px;
   align-content: flex-start;
   padding: 0.5rem;
   box-sizing: border-box;
@@ -398,7 +398,7 @@ h1 {
 .side-zone-droppable {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 25px;
   padding: 1rem;
   height: 100%;
   box-sizing: border-box;
