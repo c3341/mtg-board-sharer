@@ -148,16 +148,19 @@ function App() {
       });
       const imageUrl = canvas.toDataURL('image/jpeg', 0.9);
 
-      const newWindow = window.open();
-      if (newWindow) {
-        newWindow.document.write(`<img src="${imageUrl}" alt="Generated Board" />`);
-      } else {
-        alert('ポップアップブロックにより、画像を表示できませんでした。');
-      }
+      // ローカル保存のロジック
+      const link = document.createElement('a');
+      link.href = imageUrl;
+      link.download = 'mtg-board.jpg'; // ダウンロード時のファイル名
+      document.body.appendChild(link); // DOMに追加しないとclick()が動作しないブラウザがある
+      link.click(); // ダウンロードをトリガー
+      document.body.removeChild(link); // 不要になったaタグを削除
+
+      alert('盤面画像をダウンロードしました！'); // ダウンロード完了を通知
 
     } catch (error) {
       console.error('画像共有中にエラーが発生しました:', error);
-      alert('画像共有中にエラーが発生しました。');
+      alert('画像保存中にエラーが発生しました。');
     } finally {
       document.body.removeChild(cloneContainer);
       setIsSharing(false);
@@ -176,7 +179,7 @@ function App() {
           <CardSearch onCardSelect={handleCardSelect} />
         </div>
         <button onClick={handleShareAsImage} className="share-button" disabled={isSharing}>
-          {isSharing ? '生成中...' : '画像として共有'}
+          {isSharing ? '生成中...' : 'Save image'} {/* テキスト変更 */}
         </button>
       </div>
 
