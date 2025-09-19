@@ -61,19 +61,17 @@ function App() {
   const handleShareAsImage = async () => {
     setIsSharing(true);
 
-    // 1. クローン用のコンテナを準備
     const cloneContainer = document.createElement('div');
-    // スタイルを適用して画面外に配置
+    const appContainer = document.querySelector('.app-container');
     Object.assign(cloneContainer.style, {
       position: 'absolute',
       left: '-9999px',
       top: '0',
-      padding: '20px', // 元のapp-containerのスタイルを参考に
+      padding: '20px',
       backgroundColor: '#1a1a1a',
-      width: document.querySelector('.app-container').offsetWidth + 'px' // 幅を合わせる
+      width: appContainer ? appContainer.offsetWidth + 'px' : '1200px',
     });
 
-    // 2. キャプチャしたい要素をクローンしてコンテナに追加
     const elementSelectors = ['.opponent-hand-area', '.game-board', '.hand-area.player-hand-area'];
     elementSelectors.forEach(selector => {
       const element = document.querySelector(selector);
@@ -83,21 +81,73 @@ function App() {
       }
     });
 
-    // 3. クローンコンテナをDOMに追加
+    cloneContainer.querySelectorAll('.life-counter-box input').forEach(input => {
+      const lifeValue = input.value;
+      const lifeDiv = document.createElement('div');
+      lifeDiv.textContent = lifeValue;
+      Object.assign(lifeDiv.style, {
+        fontSize: '2.5rem',
+        fontWeight: 'bold',
+        width: '100px',
+        textAlign: 'center',
+        color: '#f0f0f0',
+        height: '3rem',
+        lineHeight: '3rem',
+      });
+      input.parentNode.replaceChild(lifeDiv, input);
+    });
+
     document.body.appendChild(cloneContainer);
 
     try {
-      // 4. html2canvasでクローンコンテナをキャプチャ
+      // ★タップされたカードをCanvasに置き換える処理
+      const tappedCardElements = cloneContainer.querySelectorAll('.card-item.tapped');
+      const promises = Array.from(tappedCardElements).map(async (cardElement) => {
+        const img = cardElement.querySelector('img');
+        if (!img || !img.src) return;
+
+        return new Promise((resolve, reject) => {
+          const originalImage = new Image();
+          originalImage.crossOrigin = 'Anonymous'; // CORS対応
+          originalImage.src = img.src;
+          originalImage.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // カードの元のサイズを取得 (CSSで指定されている想定)
+            const originalWidth = cardElement.clientWidth;
+            const originalHeight = cardElement.clientHeight;
+
+            // 回転後は幅と高さが入れ替わる
+            canvas.width = originalHeight;
+            canvas.height = originalWidth;
+
+            // Canvasの中心に移動し、90度回転
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(90 * Math.PI / 180);
+
+            // 画像を描画 (中心から描画するため、幅/高さの半分を引く)
+            ctx.drawImage(originalImage, -originalWidth / 2, -originalHeight / 2, originalWidth, originalHeight);
+
+            // 元のカード要素を生成したCanvasに置き換える
+            cardElement.parentNode.replaceChild(canvas, cardElement);
+            resolve();
+          };
+          originalImage.onerror = reject;
+        });
+      });
+
+      // すべての画像処理が終わるのを待つ
+      await Promise.all(promises);
+
       const canvas = await html2canvas(cloneContainer, {
         useCORS: true,
         backgroundColor: '#1a1a1a',
-        // windowWidthとwindowHeightを使って、スクロール領域全体をキャプチャ
         windowWidth: cloneContainer.scrollWidth,
         windowHeight: cloneContainer.scrollHeight,
       });
       const imageUrl = canvas.toDataURL('image/jpeg', 0.9);
 
-      // デバッグ用に、生成した画像を新しいタブで開く
       const newWindow = window.open();
       if (newWindow) {
         newWindow.document.write(`<img src="${imageUrl}" alt="Generated Board" />`);
@@ -105,13 +155,10 @@ function App() {
         alert('ポップアップブロックにより、画像を表示できませんでした。');
       }
 
-      // TODO: 画像アップロード処理を後で有効化する
-
     } catch (error) {
       console.error('画像共有中にエラーが発生しました:', error);
       alert('画像共有中にエラーが発生しました。');
     } finally {
-      // 5. クリーンアップ
       document.body.removeChild(cloneContainer);
       setIsSharing(false);
     }
