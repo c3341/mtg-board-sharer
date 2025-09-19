@@ -71,7 +71,13 @@ function DraggableCard({ card }) {
 
 
   // 表示する画像のURLを決定
-  const imageUrl = card.isFaceDown ? CARD_BACK_IMAGE : (card.image_uris && card.image_uris.small);
+  const getProxiedUrl = (scryfallUrl) => {
+    // Viteのプロキシ設定により、このリクエストはバックエンドに転送される
+    return `/api/image-proxy?url=${encodeURIComponent(scryfallUrl)}`;
+  }
+  const imageUrl = card.isFaceDown 
+    ? CARD_BACK_IMAGE 
+    : (card.image_uris && card.image_uris.small ? getProxiedUrl(card.image_uris.small) : null);
 
   return (
     <>

@@ -73,37 +73,48 @@ function App() {
         useCORS: true, // 外部ドメインの画像(Scryfall)を読み込むために必要
         backgroundColor: '#1a1a1a', // 背景色を指定
       });
-      const imageBase64 = canvas.toDataURL('image/jpeg', 0.9).split(',')[1];
+      const imageUrl = canvas.toDataURL('image/jpeg', 0.9);
 
-      // 2. freeimage.hostにアップロード
-      const FREEIMAGE_API_KEY = '6d207e02198a847aa98d0a2a901485a5'; // 公開APIキー
-      const formData = new FormData();
-      formData.append('key', FREEIMAGE_API_KEY);
-      formData.append('action', 'upload');
-      formData.append('source', imageBase64);
-      formData.append('format', 'json');
-
-      const response = await fetch('https://freeimage.host/api/1/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`freeimage.hostへのアップロードに失敗しました: ${response.statusText}`);
+      // デバッグ用に、生成した画像を新しいタブで開く
+      const newWindow = window.open();
+      if (newWindow) {
+        newWindow.document.write(`<img src="${imageUrl}" alt="Generated Board" />`);
+      } else {
+        alert('ポップアップブロックにより、画像を表示できませんでした。');
       }
+      
+      // ★ここから下を一時的に無効化
+      // const imageBase64 = imageUrl.split(',')[1];
 
-      const data = await response.json();
-      if (data.status_code !== 200) {
-        throw new Error(`freeimage.host APIがエラーを返しました: ${data.error.message}`);
-      }
+      // // 2. freeimage.hostにアップロード
+      // const FREEIMAGE_API_KEY = '6d207e02198a847aa98d0a2a901485a5'; // 公開APIキー
+      // const formData = new FormData();
+      // formData.append('key', FREEIMAGE_API_KEY);
+      // formData.append('action', 'upload');
+      // formData.append('source', imageBase64);
+      // formData.append('format', 'json');
 
-      // 3. 画像URLをクリップボードにコピー
-      const imageUrl = data.image.url;
-      navigator.clipboard.writeText(imageUrl).then(() => {
-        alert(`画像URLをクリップボードにコピーしました！\n${imageUrl}`);
-      }, () => {
-        alert('クリップボードへのコピーに失敗しました。');
-      });
+      // const response = await fetch('https://freeimage.host/api/1/upload', {
+      //   method: 'POST',
+      //   body: formData,
+      // });
+
+      // if (!response.ok) {
+      //   throw new Error(`freeimage.hostへのアップロードに失敗しました: ${response.statusText}`);
+      // }
+
+      // const data = await response.json();
+      // if (data.status_code !== 200) {
+      //   throw new Error(`freeimage.host APIがエラーを返しました: ${data.error.message}`);
+      // }
+
+      // // 3. 画像URLをクリップボードにコピー
+      // const imageUrl = data.image.url;
+      // navigator.clipboard.writeText(imageUrl).then(() => {
+      //   alert(`画像URLをクリップボードにコピーしました！\n${imageUrl}`);
+      // }, () => {
+      //   alert('クリップボードへのコピーに失敗しました。');
+      // });
 
     } catch (error) {
       console.error('画像共有中にエラーが発生しました:', error);
