@@ -59,19 +59,41 @@ function App() {
 
   // 画像として共有する処理
   const handleShareAsImage = async () => {
-    const boardElement = document.querySelector('.game-board');
-    if (!boardElement) {
-      alert('盤面要素が見つかりません。');
-      return;
-    }
-
     setIsSharing(true);
 
+    // 1. クローン用のコンテナを準備
+    const cloneContainer = document.createElement('div');
+    // スタイルを適用して画面外に配置
+    Object.assign(cloneContainer.style, {
+      position: 'absolute',
+      left: '-9999px',
+      top: '0',
+      padding: '20px', // 元のapp-containerのスタイルを参考に
+      backgroundColor: '#1a1a1a',
+      width: document.querySelector('.app-container').offsetWidth + 'px' // 幅を合わせる
+    });
+
+    // 2. キャプチャしたい要素をクローンしてコンテナに追加
+    const elementSelectors = ['.opponent-hand-area', '.game-board', '.hand-area.player-hand-area'];
+    elementSelectors.forEach(selector => {
+      const element = document.querySelector(selector);
+      if (element) {
+        const clonedElement = element.cloneNode(true);
+        cloneContainer.appendChild(clonedElement);
+      }
+    });
+
+    // 3. クローンコンテナをDOMに追加
+    document.body.appendChild(cloneContainer);
+
     try {
-      // 1. html2canvasでスクリーンショットを生成
-      const canvas = await html2canvas(boardElement, {
-        useCORS: true, // 外部ドメインの画像(Scryfall)を読み込むために必要
-        backgroundColor: '#1a1a1a', // 背景色を指定
+      // 4. html2canvasでクローンコンテナをキャプチャ
+      const canvas = await html2canvas(cloneContainer, {
+        useCORS: true,
+        backgroundColor: '#1a1a1a',
+        // windowWidthとwindowHeightを使って、スクロール領域全体をキャプチャ
+        windowWidth: cloneContainer.scrollWidth,
+        windowHeight: cloneContainer.scrollHeight,
       });
       const imageUrl = canvas.toDataURL('image/jpeg', 0.9);
 
@@ -82,44 +104,15 @@ function App() {
       } else {
         alert('ポップアップブロックにより、画像を表示できませんでした。');
       }
-      
-      // ★ここから下を一時的に無効化
-      // const imageBase64 = imageUrl.split(',')[1];
 
-      // // 2. freeimage.hostにアップロード
-      // const FREEIMAGE_API_KEY = '6d207e02198a847aa98d0a2a901485a5'; // 公開APIキー
-      // const formData = new FormData();
-      // formData.append('key', FREEIMAGE_API_KEY);
-      // formData.append('action', 'upload');
-      // formData.append('source', imageBase64);
-      // formData.append('format', 'json');
-
-      // const response = await fetch('https://freeimage.host/api/1/upload', {
-      //   method: 'POST',
-      //   body: formData,
-      // });
-
-      // if (!response.ok) {
-      //   throw new Error(`freeimage.hostへのアップロードに失敗しました: ${response.statusText}`);
-      // }
-
-      // const data = await response.json();
-      // if (data.status_code !== 200) {
-      //   throw new Error(`freeimage.host APIがエラーを返しました: ${data.error.message}`);
-      // }
-
-      // // 3. 画像URLをクリップボードにコピー
-      // const imageUrl = data.image.url;
-      // navigator.clipboard.writeText(imageUrl).then(() => {
-      //   alert(`画像URLをクリップボードにコピーしました！\n${imageUrl}`);
-      // }, () => {
-      //   alert('クリップボードへのコピーに失敗しました。');
-      // });
+      // TODO: 画像アップロード処理を後で有効化する
 
     } catch (error) {
       console.error('画像共有中にエラーが発生しました:', error);
       alert('画像共有中にエラーが発生しました。');
     } finally {
+      // 5. クリーンアップ
+      document.body.removeChild(cloneContainer);
       setIsSharing(false);
     }
   };
