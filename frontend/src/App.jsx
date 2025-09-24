@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import html2canvas from 'html2canvas'; // html2canvasをインポート
 import CardSearch from './components/CardSearch';
 import Battlefield from './components/Battlefield';
@@ -35,6 +35,7 @@ function App() {
   const { addCard, cards, moveCard, overwriteCards } = useCardContext();
   const [isLoading, setIsLoading] = useState(true);
   const [isSharing, setIsSharing] = useState(false); // 画像共有処理中のローディング状態
+  const searchInputRef = useRef(null); // 検索欄への参照を作成
 
   // URLから盤面を復元する処理 (これは以前の実装のまま)
   useEffect(() => {
@@ -47,6 +48,15 @@ function App() {
 
   const handleCardSelect = (cardData) => {
     addCard(cardData);
+  };
+
+  // 背景右クリックで検索欄にフォーカスするハンドラ
+  const handleBackgroundContextMenu = (e) => {
+    // クリックされた要素がカード自身やその子要素でない場合のみフォーカス
+    if (e.target.closest('.card-item') === null) {
+      e.preventDefault();
+      searchInputRef.current?.focus();
+    }
   };
 
   // 画像として共有する処理
@@ -164,11 +174,11 @@ function App() {
   }
 
   return (
-    <div className="app-container">
+    <div className="app-container" onContextMenu={handleBackgroundContextMenu}>
       <h1>MTG Board Sharer</h1>
       <div className="controls-container">
         <div className="search-container">
-          <CardSearch onCardSelect={handleCardSelect} />
+          <CardSearch ref={searchInputRef} onCardSelect={handleCardSelect} />
         </div>
         <button onClick={handleShareAsImage} className="share-button" disabled={isSharing}>
           {isSharing ? '生成中...' : 'Save image'} {/* テキスト変更 */}

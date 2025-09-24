@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, forwardRef } from 'react';
 
-function CardSearch({ onCardSelect }) {
+const CardSearch = forwardRef(({ onCardSelect }, ref) => {
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -80,6 +80,7 @@ function CardSearch({ onCardSelect }) {
   return (
     <div className="search-container" ref={searchContainerRef}>
       <input
+        ref={ref} // 親から渡されたrefを入力欄に設定
         type="text"
         placeholder="Search for a card..."
         value={searchText}
@@ -107,6 +108,6 @@ function CardSearch({ onCardSelect }) {
       )}
     </div>
   );
-}
+});
 
 export default CardSearch;
