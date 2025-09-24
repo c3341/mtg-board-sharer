@@ -6,8 +6,8 @@ function CardSearch({ onCardSelect }) {
   const [loading, setLoading] = useState(false);
   const searchContainerRef = useRef(null); // 検索コンポーネント全体への参照
 
-  // Scryfall Autocomplete APIのURL
-  const SCRYFALL_AUTOCOMPLETE_URL = 'https://api.scryfall.com/cards/autocomplete';
+  // Scryfall Search APIのURL
+  const SCRYFALL_SEARCH_URL = 'https://api.scryfall.com/cards/search';
 
   // --- 検索欄の外側をクリックしたときに候補を閉じる処理 ---
   useEffect(() => {
@@ -36,18 +36,21 @@ function CardSearch({ onCardSelect }) {
 
     const timer = setTimeout(async () => {
       try {
-        const response = await fetch(`${SCRYFALL_AUTOCOMPLETE_URL}?q=${searchText}`);
+        // 日本語での部分一致検索を行うようにクエリを構築
+        const query = `name:/"${searchText}" lang:ja`;
+        const response = await fetch(`${SCRYFALL_SEARCH_URL}?q=${encodeURIComponent(query)}&unique=cards`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         const data = await response.json();
+        // APIのレスポンスはカードオブジェクトの配列
         setSuggestions(data.data || []);
       } catch (error) {
-        console.error('カード名のオートコンプリート中にエラーが発生しました:', error);
+        console.error('カード検索中にエラーが発生しました:', error);
         setSuggestions([]);
       } finally {
         setLoading(false);
       }
-    }, 300); // デバウンス時間を少し短縮
+    }, 150);
 
     return () => {
       clearTimeout(timer);
@@ -56,23 +59,16 @@ function CardSearch({ onCardSelect }) {
 
   // --- イベントハンドラ --- 
 
-  // 入力変更：全角を半角に変換し、半角英字と一部記号のみを許可
+  // 入力変更：日本語入力を許可
   const handleInputChange = (event) => {
-    const rawValue = event.target.value;
-    // 全角英数字・スペースを半角に変換
-    const halfWidthValue = rawValue.replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) =>
-      String.fromCharCode(s.charCodeAt(0) - 0xFEE0)
-    );
-    // 半角英字、スペース、一部の記号以外を削除
-    const sanitizedValue = halfWidthValue.replace(/[^a-zA-Z\s'-]/g, '');
-    setSearchText(sanitizedValue);
+    setSearchText(event.target.value);
   };
 
-  // 候補クリック：カード選択を通知するのみ（連続選択のため）
-  const handleSuggestionClick = (name) => {
-    onCardSelect(name);
-    // setSearchText(''); // 入力欄をクリアすると、useEffectが発火して候補が消えるため、クリアしない
-    // setSuggestions([]); // 候補リストもクリアしない
+  // 候補クリック：カードオブジェクト全体を渡す
+  const handleSuggestionClick = (cardObject) => {
+    onCardSelect(cardObject);
+    setSearchText(''); // 選択後は入力欄をクリア
+    setSuggestions([]); // 選択後は候補をクリア
   };
 
   // クリアボタンクリック
@@ -101,9 +97,10 @@ function CardSearch({ onCardSelect }) {
       {/* 候補リスト */}
       {suggestions.length > 0 && (
         <ul>
-          {suggestions.map(name => (
-            <li key={name} onClick={() => handleSuggestionClick(name)}>
-              {name}
+          {suggestions.map(card => (
+            <li key={card.id} onClick={() => handleSuggestionClick(card)}>
+              {/* 日本語名があれば表示、なければ英語名 */}
+              {card.printed_name || card.name}
             </li>
           ))}
         </ul>

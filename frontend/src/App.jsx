@@ -45,16 +45,8 @@ function App() {
     setIsLoading(false); // すぐにメイン画面を表示
   }, [overwriteCards]);
 
-  const handleCardSelect = async (cardName) => {
-    const SCRYFALL_CARD_SEARCH_URL = `https://api.scryfall.com/cards/named`;
-    try {
-      const response = await fetch(`${SCRYFALL_CARD_SEARCH_URL}?exact=${encodeURIComponent(cardName)}`);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const cardData = await response.json();
-      addCard(cardData);
-    } catch (error) {
-      console.error('カード詳細情報の取得中にエラーが発生しました:', error);
-    }
+  const handleCardSelect = (cardData) => {
+    addCard(cardData);
   };
 
   // 画像として共有する処理
