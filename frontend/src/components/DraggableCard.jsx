@@ -108,6 +108,7 @@ function DraggableCard({ card }) {
           style={{ top: contextMenu.y, left: contextMenu.x }}
         >
           <ul>
+            <li onClick={() => { addCounters(card.instanceId, 1); closeContextMenu(); }}>カウンターを1個置く</li>
             <li onClick={() => {
               const amountStr = prompt('置くカウンターの数を入力してください:', '1');
               if (amountStr) { // キャンセルでなければ

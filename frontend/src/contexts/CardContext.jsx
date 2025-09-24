@@ -12,7 +12,7 @@ export const CardProvider = ({ children }) => {
     const cardWithInstanceId = { 
       ...newCard, 
       instanceId: crypto.randomUUID(), // ユニークIDを付与
-      zone: 'myHand',
+      zone: 'myNonLand', // デフォルトの配置場所を非土地ゾーンに変更
       isTapped: false,
       isFaceDown: false,
       counters: [], // カウンタープロパティを初期化

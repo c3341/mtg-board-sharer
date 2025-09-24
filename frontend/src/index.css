@@ -336,7 +336,13 @@ h1 {
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1rem;
+  
+  /* --- Sticky Header Styles --- */
+  position: sticky;
+  top: 0;
+  background-color: #1a1a1a; /* 背景色を指定して下の要素が透けないようにする */
+  z-index: 200; /* 他の要素より手前に表示 */
+  padding: 1rem 0; /* 上下の余白を調整 */
 }
 
 .share-button {
